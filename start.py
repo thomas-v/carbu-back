@@ -13,9 +13,9 @@ db = client.carb
 def getStationsByDpt(dpt):
 
     # get stations by postCode 
-    stations = db.stations.aggregate([{'$project' : {'carburants' : 1, 'latitude' : 1, 'longitude' : 1, 'dpt' : {'$substr' : ['$cp', 0, 2]}}}, {'$match' : {'dpt' : dpt}}])
+    stations = db.stations.aggregate([{'$project' : {'adresse' : 1, 'ville' : 1, 'cp' : 1, 'carburants' : 1, 'latitude' : 1, 'longitude' : 1, 'dpt' : {'$substr' : ['$cp', 0, 2]}}}, {'$match' : {'dpt' : dpt}}])
     
-    stations_list = [({'latitude' : station['latitude'], 'longitude' : station['longitude'], 'carburants' : station['carburants']}) for station in stations]
+    stations_list = [({'adresse' : station['adresse'], 'ville' : station['ville'], 'cp' : station['cp'], 'latitude' : station['latitude'], 'longitude' : station['longitude'], 'carburants' : station['carburants']}) for station in stations]
 
     return json.dumps(stations_list)
 
