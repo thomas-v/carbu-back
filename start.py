@@ -1,6 +1,6 @@
 import bottle
 from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
 app = application = bottle.Bottle() 
@@ -9,15 +9,13 @@ app = application = bottle.Bottle()
 client = MongoClient('localhost', 27017)
 db = client.carb
 
-@app.route('/stations/<cp>')
-def getStationsByPostCode(cp):
-    
-    # current date
-    today = datetime.today().strftime('%Y-%m-%d')
+@app.route('/stations/<dpt>')
+def getStationsByDpt(dpt):
 
     # get stations by postCode 
-    stations = db.pdv.find({'cp' : cp}, {'latitude' : 1, 'longitude' : 1, today : 1})
-    stations_list = [({'latitude' : station['latitude'], 'longitude' : station['longitude'], 'carburants' : station[today]}) for station in stations]
+    stations = db.stations.aggregate([{'$project' : {'carburants' : 1, 'latitude' : 1, 'longitude' : 1, 'dpt' : {'$substr' : ['$cp', 0, 2]}}}, {'$match' : {'dpt' : dpt}}])
+    
+    stations_list = [({'latitude' : station['latitude'], 'longitude' : station['longitude'], 'carburants' : station['carburants']}) for station in stations]
 
     return json.dumps(stations_list)
 
