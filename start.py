@@ -16,7 +16,7 @@ def getStationsByDpt(dpt, cp):
     city_stations = db.stations.find({'cp' : cp}, {'adresse' : 1, 'ville' : 1, 'cp' : 1, 'carburants' : 1, 'latitude' : 1, 'longitude' : 1,})
 
     # get stations by dpt 
-    stations = db.stations.aggregate([{'$project' : {'adresse' : 1, 'ville' : 1, 'cp' : 1, 'carburants' : 1, 'latitude' : 1, 'longitude' : 1, 'dpt' : {'$substr' : ['$cp', 0, 2]}}}, {'$match' : { '$and' : [ {'dpt' : dpt}, {'cp' : {'$ne' : '78370'}} ] } }, { '$sort' : { 'cp' : 1 } }])
+    stations = db.stations.aggregate([{'$project' : {'adresse' : 1, 'ville' : 1, 'cp' : 1, 'carburants' : 1, 'latitude' : 1, 'longitude' : 1, 'dpt' : {'$substr' : ['$cp', 0, 2]}}}, {'$match' : { '$and' : [ {'dpt' : dpt}, {'cp' : {'$ne' : cp}} ] } }, { '$sort' : { 'cp' : 1 } }])
 
     city_stations_list = [({'adresse' : station['adresse'], 'ville' : station['ville'], 'cp' : station['cp'], 'latitude' : station['latitude'], 'longitude' : station['longitude'], 'carburants' : station['carburants']}) for station in city_stations]
     stations_list = city_stations_list + [({'adresse' : station['adresse'], 'ville' : station['ville'], 'cp' : station['cp'], 'latitude' : station['latitude'], 'longitude' : station['longitude'], 'carburants' : station['carburants']}) for station in stations]
